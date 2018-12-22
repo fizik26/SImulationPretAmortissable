@@ -73,6 +73,7 @@
 
 	<script type="text/javascript">
 		function toto() {
+			document.getElementById("tableCalcul").getElementsByTagName('tbody')[0].innerHTML = "";
 			var duree=document.getElementById('duree').value;
 			var montant=document.getElementById('montant').value;
 			var taux=(document.getElementById('taux').value)/100;
