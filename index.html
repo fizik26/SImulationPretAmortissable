@@ -55,23 +55,13 @@
 							<tr class="row100 head">
 								<th class="column100 column1" data-column="column1">€</th>
 								<th class="column100 column2" data-column="column2">Capital restant</th>
-								<th class="column100 column3" data-column="column3">Remboursement global</th>
+								<th class="column100 column3" data-column="column3">Remboursement global brut</th>
 								<th class="column100 column4" data-column="column4">Remboursement capital</th>
 								<th class="column100 column5" data-column="column5">Remboursement intérêts bruts</th>
 								<th class="column100 column6" data-column="column6">Remboursement intérêts nets</th>
 							</tr>
 						</thead>
-						<tbody>
-							<div id="init">								
-								<tr class="row100">
-									<td class="total column1" data-column="column1">Total</td>
-									<td class="total column2" data-column="column2">--</td>
-									<td class="total column3" data-column="column3">--</td>
-									<td class="total column4" data-column="column4">--</td>
-									<td class="total column5" data-column="column5">--</td>
-									<td class="total column6" data-column="column6">--</td>
-								</tr>
-							</div>
+						<tbody>	
 						</tbody>
 					</table>
 				</div>
@@ -90,6 +80,7 @@
 			var lastCapital = montant;
 			var interetsBrut = 0;
 			var remboursementCapital = 0;
+			var totalInteretsBrut = 0;
 			
 			for( var i = 0 ; i <= duree ; i++) {
 				if(i > 0) {
@@ -98,9 +89,9 @@
 					lastCapital = calculDernierCapital(lastCapital , remboursementCapital);
 				}
 				addLigne(i , remboursementMensuel , lastCapital , interetsBrut , remboursementCapital , montant);
-				
-				//addTotal();
+				totalInteretsBrut = totalInteretsBrut + interetsBrut;
 			}
+			addTotal(duree , remboursementMensuel , totalInteretsBrut, montant);
 			
 			(function ($) {
 				"use strict";
@@ -160,8 +151,37 @@
 			return lastCapital*taux/12;
 		}
 		
+		function addTotal(duree , remboursementMensuel , totalInteretsBrut, montant) {
+			var x=document.getElementById('tableCalcul').getElementsByTagName('tbody')[0].insertRow(-1);
+			x.className = 'row100';
+			var a = x.insertCell(0);
+			var b = x.insertCell(1);
+			var c = x.insertCell(2);
+			var d = x.insertCell(3);
+			var e = x.insertCell(4);
+			var f = x.insertCell(5);
+			a.className = 'total column1';
+			b.className = 'total column2';
+			c.className = 'total column3';
+			d.className = 'total column4';
+			e.className = 'total column5';
+			f.className = 'total column6';
+			a.innerHTML="Total";
+			b.innerHTML="--";
+			c.innerHTML=(Math.round(remboursementMensuel*duree * 100)/100).toFixed(2);
+			d.innerHTML=montant;
+			e.innerHTML=(Math.round(totalInteretsBrut * 100)/100).toFixed(2);
+			f.innerHTML=(Math.round(totalInteretsBrut*0.7 * 100)/100).toFixed(2);
+			
+			a.setAttribute("data-column", "column1");
+			b.setAttribute("data-column", "column2");
+			c.setAttribute("data-column", "column3");
+			d.setAttribute("data-column", "column4");
+			e.setAttribute("data-column", "column5");
+			f.setAttribute("data-column", "column6");
+		}
+		
 		function addLigne(i , remboursementMensuel , lastCapital , interetsBrut , remboursementCapital, montant) {
-			console.log(" i : "+i+"    mensuel remb : "+remboursementMensuel + "   lastCapital   :  "+lastCapital+"      interetsBrut   :  "+interetsBrut+"    remboursementCapital  :  " + remboursementCapital);
 			var x=document.getElementById('tableCalcul').getElementsByTagName('tbody')[0].insertRow(i);
 			x.className = 'row100';
 			var a = x.insertCell(0);
@@ -198,7 +218,6 @@
 			d.setAttribute("data-column", "column4");
 			e.setAttribute("data-column", "column5");
 			f.setAttribute("data-column", "column6");
-			//document.getElementById('init').innerHTML = '<tr class="row100"><td class="column100 column1" data-column="column1">Mois 0</td><td class="column100 column2" data-column="column2">--</td><td class="column100 column3" data-column="column3">--</td><td class="column100 column4" data-column="column4">--</td><td class="column100 column5" data-column="column5">--</td><td class="column100 column6" data-column="column6">--</td></tr>';
 		}
 	</script>
 	
