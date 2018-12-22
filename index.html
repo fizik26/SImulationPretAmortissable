@@ -25,7 +25,7 @@
 	
 	<div class="limiter">
 	<div class="container-input">
-				<div class="table100 ver2 m-b-110">
+				<div class="table100 ver2">
 					<table data-vertable="ver2">
 						<thead>
 							<tr class="row100 head">
@@ -50,7 +50,7 @@
 		<div class="container-table100">
 			<div class="wrap-table100">
 				<div class="table100 ver2 m-b-110">
-					<table data-vertable="ver2">
+					<table data-vertable="ver2" id="tableCalcul">
 						<thead>
 							<tr class="row100 head">
 								<th class="column100 column1" data-column="column1">€</th>
@@ -62,23 +62,16 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr class="row100">
-								<td class="column100 column1" data-column="column1">Mois 0</td>
-								<td class="column100 column2" data-column="column2">--</td>
-								<td class="column100 column3" data-column="column3">--</td>
-								<td class="column100 column4" data-column="column4">--</td>
-								<td class="column100 column5" data-column="column5">--</td>
-								<td class="column100 column6" data-column="column6">--</td>
-							</tr>
-							
-							<tr class="row100">
-								<td class="total" data-column="column1">Total</td>
-								<td class="total" data-column="column2">--</td>
-								<td class="total" data-column="column3">--</td>
-								<td class="total" data-column="column4">--</td>
-								<td class="total" data-column="column5">--</td>
-								<td class="total" data-column="column6">--</td>
-							</tr>
+							<div id="init">								
+								<tr class="row100">
+									<td class="total column1" data-column="column1">Total</td>
+									<td class="total column2" data-column="column2">--</td>
+									<td class="total column3" data-column="column3">--</td>
+									<td class="total column4" data-column="column4">--</td>
+									<td class="total column5" data-column="column5">--</td>
+									<td class="total column6" data-column="column6">--</td>
+								</tr>
+							</div>
 						</tbody>
 					</table>
 				</div>
@@ -89,7 +82,124 @@
 
 
 	<script type="text/javascript">
-	
+		function toto() {
+			var duree=document.getElementById('duree').value;
+			var montant=document.getElementById('montant').value;
+			var taux=(document.getElementById('taux').value)/100;
+			var remboursementMensuel = (montant*taux/12)/(1-Math.pow((1+taux/12), duree*-1));
+			var lastCapital = montant;
+			var interetsBrut = 0;
+			var remboursementCapital = 0;
+			
+			for( var i = 0 ; i <= duree ; i++) {
+				if(i > 0) {
+					interetsBrut = calculInteretsBrutMensuel(lastCapital , taux);
+					remboursementCapital = calculRemboursementCapital(remboursementMensuel , interetsBrut);
+					lastCapital = calculDernierCapital(lastCapital , remboursementCapital);
+				}
+				addLigne(i , remboursementMensuel , lastCapital , interetsBrut , remboursementCapital , montant);
+				
+				//addTotal();
+			}
+			
+			(function ($) {
+				"use strict";
+				$('.column100').on('mouseover',function(){
+					var table1 = $(this).parent().parent().parent();
+					var table2 = $(this).parent().parent();
+					var verTable = $(table1).data('vertable')+"";
+					var column = $(this).data('column') + ""; 
+
+					$(table2).find("."+column).addClass('hov-column-'+ verTable);
+					$(table1).find(".row100.head ."+column).addClass('hov-column-head-'+ verTable);
+				});
+
+				$('.column100').on('mouseout',function(){
+					var table1 = $(this).parent().parent().parent();
+					var table2 = $(this).parent().parent();
+					var verTable = $(table1).data('vertable')+"";
+					var column = $(this).data('column') + ""; 
+
+					$(table2).find("."+column).removeClass('hov-column-'+ verTable);
+					$(table1).find(".row100.head ."+column).removeClass('hov-column-head-'+ verTable);
+				});
+				
+				$('.total').on('mouseover',function(){
+					var table1 = $(this).parent().parent().parent();
+					var table2 = $(this).parent().parent();
+					var verTable = $(table1).data('vertable')+"";
+					var column = $(this).data('column') + ""; 
+
+					$(table2).find("."+column).addClass('hov-column-'+ verTable);
+					$(table1).find(".row100.head ."+column).addClass('hov-column-head-'+ verTable);
+				});
+
+				$('.total').on('mouseout',function(){
+					var table1 = $(this).parent().parent().parent();
+					var table2 = $(this).parent().parent();
+					var verTable = $(table1).data('vertable')+"";
+					var column = $(this).data('column') + ""; 
+
+					$(table2).find("."+column).removeClass('hov-column-'+ verTable);
+					$(table1).find(".row100.head ."+column).removeClass('hov-column-head-'+ verTable);
+				});
+				
+
+			})(jQuery);
+		}
+		
+		function calculDernierCapital(lastCapital , remboursementCapital) {
+			return lastCapital-remboursementCapital;
+		}
+		
+		function calculRemboursementCapital(remboursementMensuel , interetsBrut) {
+			return remboursementMensuel-interetsBrut;
+		}
+		
+		function calculInteretsBrutMensuel(lastCapital , taux) {
+			return lastCapital*taux/12;
+		}
+		
+		function addLigne(i , remboursementMensuel , lastCapital , interetsBrut , remboursementCapital, montant) {
+			console.log(" i : "+i+"    mensuel remb : "+remboursementMensuel + "   lastCapital   :  "+lastCapital+"      interetsBrut   :  "+interetsBrut+"    remboursementCapital  :  " + remboursementCapital);
+			var x=document.getElementById('tableCalcul').getElementsByTagName('tbody')[0].insertRow(i);
+			x.className = 'row100';
+			var a = x.insertCell(0);
+			var b = x.insertCell(1);
+			var c = x.insertCell(2);
+			var d = x.insertCell(3);
+			var e = x.insertCell(4);
+			var f = x.insertCell(5);
+			a.className = 'column100 column1';
+			b.className = 'column100 column2';
+			c.className = 'column100 column3';
+			d.className = 'column100 column4';
+			e.className = 'column100 column5';
+			f.className = 'column100 column6';
+			a.innerHTML="Mois "+i ;
+			
+			// car au moins 0 on a juste le capital
+			if (i > 0 ) {
+				b.innerHTML=(Math.round(lastCapital * 100)/100).toFixed(2);
+				c.innerHTML=(Math.round(remboursementMensuel * 100)/100).toFixed(2);
+				d.innerHTML=(Math.round(remboursementCapital * 100)/100).toFixed(2);
+				e.innerHTML=(Math.round(interetsBrut * 100)/100).toFixed(2);
+				f.innerHTML=(Math.round(interetsBrut*0.7*100)/100).toFixed(2);
+			} else {
+				b.innerHTML=montant;
+				c.innerHTML="--";
+				d.innerHTML="--";
+				e.innerHTML="--";
+				f.innerHTML="--";
+			}
+			a.setAttribute("data-column", "column1");
+			b.setAttribute("data-column", "column2");
+			c.setAttribute("data-column", "column3");
+			d.setAttribute("data-column", "column4");
+			e.setAttribute("data-column", "column5");
+			f.setAttribute("data-column", "column6");
+			//document.getElementById('init').innerHTML = '<tr class="row100"><td class="column100 column1" data-column="column1">Mois 0</td><td class="column100 column2" data-column="column2">--</td><td class="column100 column3" data-column="column3">--</td><td class="column100 column4" data-column="column4">--</td><td class="column100 column5" data-column="column5">--</td><td class="column100 column6" data-column="column6">--</td></tr>';
+		}
 	</script>
 	
 
