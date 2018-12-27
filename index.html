@@ -93,7 +93,7 @@
 				totalInteretsBrut = totalInteretsBrut + interetsBrut;
 			}
 			addTotal(duree , remboursementMensuel , totalInteretsBrut, montant);
-			addLivretA(duree);
+			addLivretA(calculTotalLivretA(duree , montant ));
 			
 			(function ($) {
 				"use strict";
@@ -153,11 +153,25 @@
 			return lastCapital*taux/12;
 		}
 		
-		function addLivretA(duree) {
+		function calculTotalLivretA(duree , montant ) {
+			var nbAnnees = Math.trunc(duree/12);
+			var nbMoisRestant = duree%12;
+			for( var i = 0 ; i<nbAnnees ; i++) {
+				montant = montant + ( montant / (24/0.0075) * 24 );	
+			}
+			if(nbMoisRestant > 0) {
+				montant = montant + ( montant / (24/0.0075) * (nbMoisRestant * 2) ); 	
+			}
+			return (Math.round(montant * 100)/100).toFixed(2);
+		}
+		
+		function addLivretA(montantLivretA) {
 			var x=document.getElementById('tableCalcul').getElementsByTagName('tbody')[0].insertRow(-1);
 			x.className = 'row100';
 			var a = x.insertCell(0);
 			var b = x.insertCell(1);
+			a.className = 'total column1';
+			b.className = 'total column2';
 			a.innerHTML = "Livret A";
 			b.innerHtml = '--';
 			a.colSpan = 2;
