@@ -71,6 +71,11 @@
 				  <h1><span class="Cgrass">Investissement Gagnant</span> comparé au Livret A</h1><br/>  
 				  <p>Grâce à votre investissement, l'argent mis en jeu a eu un rendement de <span id="pourcentageWinLivretA" class="Cgrass"> </span><span class="Cgrass">%</span> supérieur au Livret A si vous aviez laissé l'argent dessus sur la même période</p>
 				</blockquote>
+				
+				<blockquote class="grapefruit" id="blockquoteDivBad" style="display: none">
+				  <h1><span class="Cgrapefruit">Investissement Perdant</span> comparé au Livret A</h1><br/>  
+				  <p>Malheureusement, l'argent mis en jeu pour ce prêt a un rendement de <span id="pourcentageLooseLivretA" class="Cgrapefruit"> </span><span class="Cgrapefruit">%</span> comparé au Livret A si vous aviez laissé l'argent dessus sur la même période</p>
+				</blockquote>
 
 			</div>
 		</div>
@@ -79,6 +84,8 @@
 
 	<script type="text/javascript">
 		function calculTableau() {
+			document.getElementById('blockquoteDivSuccess').style.display = "none";
+			document.getElementById('blockquoteDivBad').style.display = "none";
 			document.getElementById("tableCalcul").getElementsByTagName('tbody')[0].innerHTML = "";
 			var duree=document.getElementById('duree').value;
 			var montant=document.getElementById('montant').value;
@@ -176,13 +183,20 @@
 		}
 		
 		function addLivretA(montantLivretA , montant , totalInteretsBrut) {
-			var x=document.getElementById('pourcentageWinLivretA');
 			var interetsNetPret = (Math.round(totalInteretsBrut*0.7 * 100)/100).toFixed(2);
 			var interetsNetLivretA = (Math.round((montantLivretA-montant)* 100)/100).toFixed(2);
 			console.log("interetsNetLivretA [ "+interetsNetLivretA+" ]   interetsNetPret [ "+interetsNetPret+" ]   montant [ "+montant+" ] ");
-			var pourcentageSuperieur = interetsNetLivretA * 100 / interetsNetPret;
-			x.innerHTML = (Math.round((pourcentageSuperieur)*0.7 * 100)/100).toFixed(2);;
-			document.getElementById("blockquoteDivSuccess").style.display = "block";
+			var pourcentageSuperieur = interetsNetPret * 100 / interetsNetLivretA - 100;
+			console.log("pourcentageSuperieur [ "+pourcentageSuperieur+" ] ");
+			if( pourcentageSuperieur > 0) {
+				var x=document.getElementById('pourcentageWinLivretA');
+				x.innerHTML = (Math.round((pourcentageSuperieur)* 100)/100).toFixed(2);
+				document.getElementById("blockquoteDivSuccess").style.display = "block";
+			} else {
+				var x=document.getElementById('pourcentageLooseLivretA');
+				x.innerHTML = (Math.round((pourcentageSuperieur)* 100)/100).toFixed(2);
+				document.getElementById("blockquoteDivBad").style.display = "block";
+			}
 		}
 		
 		function addTotal(duree , remboursementMensuel , totalInteretsBrut, montant) {
