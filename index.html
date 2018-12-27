@@ -20,6 +20,7 @@
 	<link rel="stylesheet" type="text/css" href="css/util.css">
 	<link rel="stylesheet" type="text/css" href="css/main.css">
 <!--===============================================================================================-->
+
 </head>
 <body>
 	
@@ -49,7 +50,7 @@
 	
 		<div class="container-table100">
 			<div class="wrap-table100">
-				<div class="table100 ver2 m-b-110">
+				<div class="table100 ver2 m-b-15">
 					<table data-vertable="ver2" id="tableCalcul">
 						<thead>
 							<tr class="row100 head">
@@ -65,6 +66,11 @@
 						</tbody>
 					</table>
 				</div>
+
+				<blockquote class="grass" id="blockquoteDivSuccess" style="display: none">
+				  <h1><span class="Cgrass">Investissement Gagnant</span> comparé au Livret A</h1><br/>  
+				  <p>Grâce à votre investissement, l'argent mis en jeu a eu un rendement de <span id="pourcentageWinLivretA" class="Cgrass"> </span><span class="Cgrass">%</span> supérieur au Livret A si vous auriez laissé l'argent dessus sur la même période</p>
+				</blockquote>
 
 			</div>
 		</div>
@@ -93,7 +99,7 @@
 				totalInteretsBrut = totalInteretsBrut + interetsBrut;
 			}
 			addTotal(duree , remboursementMensuel , totalInteretsBrut, montant);
-			addLivretA(calculTotalLivretA(duree , montant ));
+			addLivretA(calculTotalLivretA(duree , montant ) , montant , totalInteretsBrut);
 			
 			(function ($) {
 				"use strict";
@@ -154,28 +160,29 @@
 		}
 		
 		function calculTotalLivretA(duree , montant ) {
+			var value = parseInt(montant);
 			var nbAnnees = Math.trunc(duree/12);
 			var nbMoisRestant = duree%12;
 			for( var i = 0 ; i<nbAnnees ; i++) {
-				montant = montant + ( montant / (24/0.0075) * 24 );	
+				value = value + ( value / (24/0.0075) * 24 );	
+				console.log(" Value durant for années [ "+value+" ]");
 			}
 			if(nbMoisRestant > 0) {
-				montant = montant + ( montant / (24/0.0075) * (nbMoisRestant * 2) ); 	
+				value = value + ( value / (24/0.0075) * (nbMoisRestant * 2) ); 	
 			}
-			return (Math.round(montant * 100)/100).toFixed(2);
+			
+			console.log(" Value fin [ "+value+" ]");
+			return (Math.round(value * 100)/100).toFixed(2);
 		}
 		
-		function addLivretA(montantLivretA) {
-			var x=document.getElementById('tableCalcul').getElementsByTagName('tbody')[0].insertRow(-1);
-			x.className = 'row100';
-			var a = x.insertCell(0);
-			var b = x.insertCell(1);
-			a.className = 'total column1';
-			b.className = 'total column2';
-			a.innerHTML = "Livret A";
-			b.innerHtml = montantLivretA;
-			a.colSpan = 2;
-			b.colSpan = 2;
+		function addLivretA(montantLivretA , montant , totalInteretsBrut) {
+			var x=document.getElementById('pourcentageWinLivretA');
+			var interetsNetPret = (Math.round(totalInteretsBrut*0.7 * 100)/100).toFixed(2);
+			var interetsNetLivretA = (Math.round((montantLivretA-montant)* 100)/100).toFixed(2);
+			console.log("interetsNetLivretA [ "+interetsNetLivretA+" ]   interetsNetPret [ "+interetsNetPret+" ]   montant [ "+montant+" ] ");
+			var pourcentageSuperieur = interetsNetLivretA * 100 / interetsNetPret;
+			x.innerHTML = (Math.round((pourcentageSuperieur)*0.7 * 100)/100).toFixed(2);;
+			document.getElementById("blockquoteDivSuccess").style.display = "block";
 		}
 		
 		function addTotal(duree , remboursementMensuel , totalInteretsBrut, montant) {
