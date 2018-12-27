@@ -40,7 +40,7 @@
 								<td class="column100 column1" data-column="column1"><input type="text" id="montant" placeholder="Montant en €"/></td>
 								<td class="column100 column2" data-column="column2"><input type="text" id="taux" placeholder="Taux en %"/></td>
 								<td class="column100 column3" data-column="column3"><input type="text" id="duree" placeholder="Durée en mois"/></td>
-								<td> <button type="button" onClick="toto()">Calculer !</button> </td>
+								<td> <button type="button" onClick="calculTableau()">Calculer !</button> </td>
 							</tr>
 						</tbody>
 					</table>
@@ -72,7 +72,7 @@
 
 
 	<script type="text/javascript">
-		function toto() {
+		function calculTableau() {
 			document.getElementById("tableCalcul").getElementsByTagName('tbody')[0].innerHTML = "";
 			var duree=document.getElementById('duree').value;
 			var montant=document.getElementById('montant').value;
@@ -93,6 +93,7 @@
 				totalInteretsBrut = totalInteretsBrut + interetsBrut;
 			}
 			addTotal(duree , remboursementMensuel , totalInteretsBrut, montant);
+			addLivretA(duree);
 			
 			(function ($) {
 				"use strict";
@@ -150,6 +151,17 @@
 		
 		function calculInteretsBrutMensuel(lastCapital , taux) {
 			return lastCapital*taux/12;
+		}
+		
+		function addLivretA(duree) {
+			var x=document.getElementById('tableCalcul').getElementsByTagName('tbody')[0].insertRow(-1);
+			x.className = 'row100';
+			var a = x.insertCell(0);
+			var b = x.insertCell(2);
+			a.innerHTML = "Livret A";
+			b.innerHtml = '--';
+			a.colSpan = 2;
+			b.colSpan = 2;
 		}
 		
 		function addTotal(duree , remboursementMensuel , totalInteretsBrut, montant) {
